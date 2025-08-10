@@ -6,20 +6,23 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.Choreographer
 import android.widget.Button
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.mlkit.vision.demo.java.posedetector.PoseDetectorProcessor
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
+import java.io.IOException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class VideoActivity : AppCompatActivity(), Choreographer.FrameCallback {
+class VideoActivity : AppCompatActivity() {
 
     private lateinit var videoView: VideoView
     private lateinit var graphicOverlay: GraphicOverlay
     private lateinit var poseDetectorProcessor: PoseDetectorProcessor
     private lateinit var retriever: MediaMetadataRetriever
-    private var isProcessing = false
     private val REQUEST_CODE_SELECT_VIDEO = 101
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,16 +43,6 @@ class VideoActivity : AppCompatActivity(), Choreographer.FrameCallback {
             .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
             .build()
         poseDetectorProcessor = PoseDetectorProcessor(this, options, false, false, false, false, true)
-
-        videoView.setOnPreparedListener {
-            isProcessing = true
-            Choreographer.getInstance().postFrameCallback(this)
-        }
-
-        videoView.setOnCompletionListener {
-            isProcessing = false
-            retriever.release()
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -58,28 +51,36 @@ class VideoActivity : AppCompatActivity(), Choreographer.FrameCallback {
         if (requestCode == REQUEST_CODE_SELECT_VIDEO && resultCode == RESULT_OK) {
             val videoUri: Uri? = data?.data
             videoView.setVideoURI(videoUri)
-            videoView.start()
 
             videoUri?.let {
                 retriever = MediaMetadataRetriever()
                 retriever.setDataSource(this, it)
+                processVideo(it)
             }
         }
     }
 
-    override fun doFrame(frameTimeNanos: Long) {
-        if (!isProcessing) {
-            return
+    private fun processVideo(videoUri: Uri) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong() ?: 0
+                val frameRate = 30
+                val interval = (1000 / frameRate).toLong()
+
+                for (i in 0 until duration step interval) {
+                    val frame: Bitmap? = retriever.getFrameAtTime(i * 1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+                    frame?.let {
+                        withContext(Dispatchers.Main) {
+                            graphicOverlay.clear()
+                            poseDetectorProcessor.processBitmap(it, graphicOverlay)
+                        }
+                    }
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } finally {
+                retriever.release()
+            }
         }
-
-        val currentPosition = videoView.currentPosition.toLong()
-        val frame: Bitmap? = retriever.getFrameAtTime(currentPosition * 1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
-
-        frame?.let {
-            graphicOverlay.clear()
-            poseDetectorProcessor.processBitmap(it, graphicOverlay)
-        }
-
-        Choreographer.getInstance().postFrameCallback(this)
     }
 }

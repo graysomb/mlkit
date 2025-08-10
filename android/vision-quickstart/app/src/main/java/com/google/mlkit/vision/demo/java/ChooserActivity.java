@@ -33,6 +33,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.google.mlkit.vision.demo.BuildConfig;
 import com.google.mlkit.vision.demo.R;
+import com.google.mlkit.vision.demo.VideoActivity;
 
 /** Demo app chooser which allows you pick from all available testing Activities. */
 public final class ChooserActivity extends AppCompatActivity
@@ -50,6 +51,7 @@ public final class ChooserActivity extends AppCompatActivity
             StillImageActivity.class,
             CameraXLivePreviewActivity.class,
             CameraXSourceDemoActivity.class,
+            VideoActivity.class,
           };
 
   private static final int[] DESCRIPTION_IDS =
@@ -62,6 +64,7 @@ public final class ChooserActivity extends AppCompatActivity
             R.string.desc_still_image_activity,
             R.string.desc_camerax_live_preview_activity,
             R.string.desc_cameraxsource_demo_activity,
+            R.string.desc_video_activity,
           };
 
   @Override
