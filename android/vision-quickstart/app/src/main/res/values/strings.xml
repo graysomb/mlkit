@@ -3,6 +3,7 @@
     <string name="app_name" translatable="false">MLKit-Vision</string>
     <string name="java_entry_title" translatable="false">Run the ML Kit quickstart written in Java</string>
     <string name="kotlin_entry_title" translatable="false">Run the ML Kit quickstart written in Kotlin</string>
+    <string name="video_entry_title">Process Video</string>
     <string name="ok" translatable="false">OK</string>
     <string name="permission_camera_rationale" translatable="false">Access to the camera is needed for detection</string>
     <string name="no_camera_permission" translatable="false">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
@@ -13,6 +14,7 @@
     <string name="desc_still_image_activity" translatable="false">Vision detectors demo with a still image</string>
     <string name="desc_camerax_live_preview_activity" translatable="false">Vision detectors demo with live preview using CameraX. Note that CameraX is only supported on API 21+</string>
     <string name="desc_cameraxsource_demo_activity" translatable="false">Object detection with custom classifier using ML Kit CameraXSource API. Note that CameraX is only supported on API 21+</string>
+    <string name="desc_video_activity">Process a video for pose estimation.</string>
     <string name="download_error" translatable="false">Download error</string>
     <string name="start_over" translatable="false">Start over</string>
     <string name="menu_item_settings" translatable="false">Settings</string>

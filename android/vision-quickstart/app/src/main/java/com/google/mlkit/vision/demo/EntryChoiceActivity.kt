@@ -49,6 +49,11 @@ class EntryChoiceActivity : AppCompatActivity(), ActivityCompat.OnRequestPermiss
       startActivity(intent)
     }
 
+    findViewById<TextView>(R.id.video_entry_point).setOnClickListener {
+      val intent = Intent(this@EntryChoiceActivity, VideoActivity::class.java)
+      startActivity(intent)
+    }
+
     if (!allRuntimePermissionsGranted()) {
       getRuntimePermissions()
     }
