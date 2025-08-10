@@ -7,7 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Button
-import android.widget.VideoView
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.mlkit.vision.demo.java.posedetector.PoseDetectorProcessor
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
@@ -19,7 +19,7 @@ import kotlinx.coroutines.withContext
 
 class VideoActivity : AppCompatActivity() {
 
-    private lateinit var videoView: VideoView
+    private lateinit var imageView: ImageView
     private lateinit var graphicOverlay: GraphicOverlay
     private lateinit var poseDetectorProcessor: PoseDetectorProcessor
     private lateinit var retriever: MediaMetadataRetriever
@@ -29,7 +29,7 @@ class VideoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video)
 
-        videoView = findViewById(R.id.video_view)
+        imageView = findViewById(R.id.image_view)
         graphicOverlay = findViewById(R.id.graphic_overlay)
         val selectVideoButton = findViewById<Button>(R.id.select_video_button)
 
@@ -50,8 +50,6 @@ class VideoActivity : AppCompatActivity() {
 
         if (requestCode == REQUEST_CODE_SELECT_VIDEO && resultCode == RESULT_OK) {
             val videoUri: Uri? = data?.data
-            videoView.setVideoURI(videoUri)
-
             videoUri?.let {
                 retriever = MediaMetadataRetriever()
                 retriever.setDataSource(this, it)
@@ -71,6 +69,7 @@ class VideoActivity : AppCompatActivity() {
                     val frame: Bitmap? = retriever.getFrameAtTime(i * 1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
                     frame?.let {
                         withContext(Dispatchers.Main) {
+                            imageView.setImageBitmap(it)
                             graphicOverlay.clear()
                             poseDetectorProcessor.processBitmap(it, graphicOverlay)
                         }
