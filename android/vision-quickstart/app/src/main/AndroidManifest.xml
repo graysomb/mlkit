@@ -81,10 +81,6 @@
             android:exported="true"
             android:theme="@style/AppTheme">
         </activity>
-    </application>
-
-</manifest>
-
         <activity
             android:name=".kotlin.ChooserActivity"
             android:exported="false">
@@ -117,7 +113,6 @@
         <activity
             android:name=".preference.SettingsActivity"
             android:exported="false"/>
-
     </application>
     <queries>
         <intent>
