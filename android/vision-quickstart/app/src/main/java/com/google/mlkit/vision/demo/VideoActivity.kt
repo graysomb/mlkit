@@ -69,6 +69,7 @@ class VideoActivity : AppCompatActivity() {
                     val frame: Bitmap? = retriever.getFrameAtTime(i * 1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
                     frame?.let {
                         withContext(Dispatchers.Main) {
+                            graphicOverlay.setImageSourceInfo(it.width, it.height, false)
                             imageView.setImageBitmap(it)
                             graphicOverlay.clear()
                             poseDetectorProcessor.processBitmap(it, graphicOverlay)
